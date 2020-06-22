@@ -23,7 +23,7 @@ project(
     pcsxr
     DESCRIPTION "PCSXRPlus"
     VERSION 2.0.0
-    LANGUAGES CXX
+    LANGUAGES C
 )
 
 include(CheckCCompilerFlag)
