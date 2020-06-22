@@ -1,24 +1,36 @@
 message(STATUS "* Configuring DFNet")
+add_library(DFNet MODULE)
+add_library(pcsxr::plugins::DFNet ALIAS DFNet)
+target_link_libraries(DFNet PUBLIC IProject::Options IProject::LinkerOpts)
+target_compile_definitions(DFNet PUBLIC 
+    PACKAGE_VERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+    PACKAGE_NAME="PCSXr"
+    PACKAGE_STRING="PCSXr ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+    ENABLE_NLS
+    GETTEXT_PACKAGE="pcsxr"
+    LOCALE_DIR="${CMAKE_INSTALL_FULL_DATAROOTDIR}/locale/"
+    PSEMU_DATA_DIR="${CMAKE_INSTALL_FULL_DATAROOTDIR}/psemu"
+    DEF_PLUGIN_DIR="${CMAKE_INSTALL_FULL_LIBDIR}/games/psemu"    
+)
+if (BUILD_SIO1)
+    target_compile_definitions(DFNet PUBLIC ENABLE_SIO1API)
+endif()
 
-include(GlibCompileResourcesSupport)
-
-#deps
-find_package(GLib REQUIRED)
-if(NOT GLib_FOUND)
-    message(FATAL_ERROR "GLIB2 library not found")
-endif(NOT GLib_FOUND)
-include_directories(${GLib_INCLUDE_DIRS})
-
-find_package(GTK3 REQUIRED)
-if(NOT GTK3_FOUND)
-    message(FATAL_ERROR "GTK3 library not found")
-endif(NOT GTK3_FOUND)
-include_directories(${GTK3_INCLUDE_DIRS})
-set(GTK_LIBRARIES ${GTK3_LIBRARY} ${GDK3_LIBRARY} ${GDKPixbuf_LIBRARY} ${Pango_LIBRARY} ${Cairo_LIBRARY} ${GObject_LIBRARY} ${GLib_LIBRARY} ${GIO_LIBRARY})
-
-
-#defs
-add_definitions(-DLOCALE_DIR="${CMAKE_INSTALL_FULL_DATAROOTDIR}/locale/" -DPSEMU_DATA_DIR="${CMAKE_INSTALL_FULL_DATAROOTDIR}/psemu" -DDEF_PLUGIN_DIR="${CMAKE_INSTALL_FULL_LIBDIR}/games/psemu")
+add_executable(cfgDFNet)
+target_link_libraries(cfgDFNet PUBLIC IProject::Options IProject::LinkerOpts)
+target_compile_definitions(cfgDFNet PUBLIC 
+    PACKAGE_VERSION="${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+    PACKAGE_NAME="PCSXr"
+    PACKAGE_STRING="PCSXr ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
+    ENABLE_NLS
+    GETTEXT_PACKAGE="pcsxr"
+    LOCALE_DIR="${CMAKE_INSTALL_FULL_DATAROOTDIR}/locale/"
+    PSEMU_DATA_DIR="${CMAKE_INSTALL_FULL_DATAROOTDIR}/psemu"
+    DEF_PLUGIN_DIR="${CMAKE_INSTALL_FULL_LIBDIR}/games/psemu"    
+)
+if (BUILD_SIO1)
+    target_compile_definitions(cfgDFNet PUBLIC ENABLE_SIO1API)
+endif()
 
 #sources
 set(PLUGIN_SRCS
@@ -31,12 +43,10 @@ set(GUI_SRCS
     gui.c
 )
 
-
 #resources
 set(RESOURCE_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/dfnet.ui
 )
-
 
 compile_gresources(RESOURCE_FILE
                    XML_OUT
@@ -44,16 +54,16 @@ compile_gresources(RESOURCE_FILE
                    PREFIX /org/pcsxr/dfnet
                    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
                    RESOURCES ${RESOURCE_LIST})
-
 add_custom_target(dfnet_resource DEPENDS ${RESOURCE_FILE})
 
-include_directories(${CMAKE_SOURCE_DIR}/libpcsxcore)
-add_library(DFNet MODULE ${PLUGIN_SRCS})
+target_sources(DFNet PUBLIC ${PLUGIN_SRCS})
+target_include_directories(DFNet PUBLIC ${GLib_INCLUDE_DIRS} ${GTK3_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/libpcsxcore)
+target_link_libraries(DFNet PUBLIC ${GTK_LIBRARIES})
 
-
-add_executable(cfgDFNet ${GUI_SRCS} ${RESOURCE_FILE})
+target_sources(cfgDFNet PRIVATE ${GUI_SRCS} ${RESOURCE_FILE})
 add_dependencies(cfgDFNet dfnet_resource)
-target_link_libraries(cfgDFNet ${GTK_LIBRARIES})
+target_include_directories(cfgDFNet PRIVATE ${GLib_INCLUDE_DIRS} ${GTK3_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/libpcsxcore)
+target_link_libraries(cfgDFNet PRIVATE ${GTK_LIBRARIES})
 
 install(TARGETS DFNet LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/games/psemu)
 install(TARGETS cfgDFNet RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}/games/psemu)

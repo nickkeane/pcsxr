@@ -1,3 +1,7 @@
+2.0.0
+- Modernize CMake Targeting
+- Add Clang Format and Tidy Settings
+
 1.9.92
 - Many fixes/changes to the core and Internal HLE BIOS.
 - Root counters code has been rewritten.
@@ -18,7 +22,7 @@
 - Hide the GNOME panels in fullscreen mode when using the OpenGL plugin.
 - GTK UI: Added a toolbar in mainwindow, improved Memory Card dialog box.
 - Added Telnet-based debugger (based on PCSX CVS). Removed PCSX-df debugger.
-- Added Portuguese (Brazilian) translation (courtesy of Tib¨¦rio V¨ªtor).
+- Added Portuguese (Brazilian) translation (courtesy of Tibï¿½ï¿½rio Vï¿½ï¿½tor).
 - Other minor bugfixes/tweaks.
 
 1.9.83
