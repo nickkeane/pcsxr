@@ -1,4 +1,7 @@
-matrix:
+os: linux
+dist: focal
+language: c
+jobs:
   include:
     - os: linux
       language: c
@@ -21,9 +24,9 @@ matrix:
     - os: osx
       osx_image: xcode11.5
       before_install:
-        - curl -O -L https://www.libsdl.org/release/SDL2-2.0.12.dmg
-        - hdiutil attach SDL2-2.0.12.dmg
-        - sudo cp -a /Volumes/SDL2/SDL2.framework /Library/Frameworks/
+        - curl -O -L https://www.libsdl.org/release/SDL2-2.0.14.dmg
+        - hdiutil attach SDL2-2.0.14.dmg
+        - cp -a /Volumes/SDL2/SDL2.framework /Library/Frameworks/
       language: objective-c
       xcode_project: macosx/Pcsxr.xcodeproj
       xcode_scheme: PCSXR
